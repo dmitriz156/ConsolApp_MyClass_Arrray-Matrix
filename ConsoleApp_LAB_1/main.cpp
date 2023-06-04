@@ -4,12 +4,13 @@
 
 using namespace std;
 
-MyArray array_a(10);
-MyArray array_b(10);
-MyArray array_c;
+//MyArray array_a(10);
+//MyArray array_b(10);
+//MyArray array_c;
 
-MyMatrix matrix_a;
-MyMatrix matrix_b;
+//MyMatrix matrix_a;
+//MyMatrix matrix_b;
+//MyMatrix matrix_c;
 
 void WorkOnTheArray();
 void WorkOnTheMatrix();
@@ -44,6 +45,9 @@ int main()
 
 void WorkOnTheArray()
 {
+    MyArray array_a(10,10000);
+    MyArray array_b(10,10000);
+    MyArray array_c(10);
     int size_po_arr;
     int *pointers_array;
     int key;
@@ -65,7 +69,7 @@ void WorkOnTheArray()
         cin >> key;
         switch (key) {
         case 0:
-            exit(0);
+            //exit(0);
         case 1:
             array_a.setAllElement();
             break;
@@ -74,6 +78,8 @@ void WorkOnTheArray()
             break;
         case 3:
             sum(array_a, array_b, array_c);
+            cout << "Sum:" << endl;
+            array_c.printArray();
             break;
         case 4:
             cout << "Dividing of array 1 by array 2" << endl;
@@ -102,6 +108,9 @@ void WorkOnTheArray()
 
 void WorkOnTheMatrix()
 {
+    MyMatrix matrix_a(3, 3);
+    MyMatrix matrix_b(3, 3);
+    MyMatrix matrix_c(3, 3);
     double *arr;
     int key;
     do{
@@ -112,10 +121,12 @@ void WorkOnTheMatrix()
         cout << "4. Element-wise multiplication of two matrices" << endl;
         cout << "5. Output the matrix" << endl;
         cout << "6. Output the array (1)" << endl;
+        cout << "0. Return to the main menu" << endl;
         cout << "Your choice:" << endl;
         cin >> key;
         switch (key) {
         case 0:
+            //exit(0);
             break;
         case 1:
             matrix_a.setAllElement();
@@ -129,11 +140,10 @@ void WorkOnTheMatrix()
             ChangeMinMax(matrix_a);
             break;
         case 4:
-            mult(matrix_a);
+            mult(matrix_a, matrix_b, matrix_c);
             break;
         case 5:
             matrix_a.printMatrix();
-            //MatrVis(matr, nRow, nCol);
             break;
         case 6:
             printArrD(matrix_a, arr);

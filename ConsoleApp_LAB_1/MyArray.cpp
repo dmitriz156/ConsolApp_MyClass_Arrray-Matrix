@@ -4,27 +4,54 @@ using namespace std;
 
 MyArray::MyArray(){
     //cout << "Starting default constructor !" << endl;
-    for(int i = 0; i < this->arr_length; i++){
-        this->array[i] = 0;
-    }
+    this->arr_length = 0;
+    this->array = NULL;
 }
 
 MyArray::MyArray(int l){
     //cout << "Starting overloaded constructor !" << endl;
-    if (l != this->arr_length)
-    {
-        for (int i = 0; i < this->arr_length; i++) {
-            this->array[i] = 0;
-        }
-    }
-    else
-    {
-        for (int i = 0; i < this->arr_length; i++) {
-            this->array[i] = (rand() % 100000);
-        }
+    this->arr_length = l;
+    this->array = new int [this->arr_length];
+
+    for (int i = 0; i < this->arr_length; i++) {
+        this->array[i] = 0;
     }
 }
 
+MyArray::MyArray(int l, int mod){
+    //cout << "Starting overloaded constructor !" << endl;
+    this->arr_length = l;
+    this->array = new int [this->arr_length];
+
+    for (int i = 0; i < this->arr_length; i++) {
+        this->array[i] = (rand() % mod);
+    }
+}
+
+MyArray::MyArray(const MyArray& origin){
+    //copy constructor
+    this->arr_length = origin.arr_length;
+    this->array = new int [origin.arr_length];
+
+    for (int i = 0; i < this->arr_length; i++) {
+        this->array[i] = origin.array[i];
+    }
+}
+
+MyArray MyArray::operator = (MyArray b){
+    //Overloaded operator "="
+    this->arr_length = b.arr_length;
+    if(this->array != NULL) delete [] this->array;
+    this->array = new int [b.arr_length];
+    for (int i = 0; i < this->arr_length; i++) {
+        this->array[i] = b.array[i];
+    }
+    return *this;
+}
+
+MyArray::~MyArray(){
+    delete [] this->array;
+}
 
 int MyArray::getLength(){
     return this->arr_length;
@@ -50,6 +77,21 @@ void MyArray::setAllElement()
     }
 }
 
+void MyArray::ResizeArray(int new_length)
+{
+    int* arr = new int [new_length];
+
+    for (int i = 0; i < new_length; i++) {
+        arr[i] = 0;
+    }
+    for (int i = 0; i < new_length || i < this->arr_length; i++) {
+        arr[i] = this->array[i];
+    }
+    delete [] this->array;
+    this->array = arr;
+    this->arr_length = new_length;
+}
+
 void MyArray::printArray()
 {
     for (int i = 0; i < this->arr_length; i++) {
@@ -60,30 +102,52 @@ void MyArray::printArray()
 
 
 
+//void sum(MyArray array_a, MyArray array_b, MyArray& array_c) {
+//    if((array_a.getLength() != array_b.getLength()) ||
+//       (array_b.getLength() != array_c.getLength()) ||
+//       (array_a.getLength() != array_c.getLength()))
+//        return;
+//    for (int i = 0; i < array_a.getLength(); i++) {
+//        array_c.setElementAt(i, array_a.getElementAt(i) + array_b.getElementAt(i));
+//    }
+//    cout << "Sum:" << endl;
+//    array_c.printArray();
+//}
+
 void sum(MyArray array_a, MyArray array_b, MyArray& array_c) {
-    if((array_a.getLength() != array_b.getLength()) ||
-       (array_b.getLength() != array_c.getLength()) ||
-       (array_a.getLength() != array_c.getLength()))
+    if(array_a.arr_length != array_b.arr_length)
         return;
-    for (int i = 0; i < array_a.getLength(); i++) {
-        array_c.setElementAt(i, array_a.getElementAt(i) + array_b.getElementAt(i));
+    array_c.ResizeArray(array_a.arr_length);
+    for (int i = 0; i < array_a.arr_length; i++) {
+        array_c.array[i] = array_a.array[i] + array_b.array[i];
     }
-    cout << "Sum:" << endl;
-    array_c.printArray();
 }
 
-
-
+//void div(MyArray array_a, MyArray array_b, MyArray& array_c, int order) {
+//    if((array_a.getLength() != array_b.getLength()) ||
+//       (array_b.getLength() != array_c.getLength()) ||
+//       (array_a.getLength() != array_c.getLength()))
+//        return;
+//    for (int i = 0; i < array_a.getLength(); i++) {
+//        if (order == 0)
+//            array_c.setElementAt(i, array_a.getElementAt(i) / array_b.getElementAt(i));
+//        else if (order == 1)
+//            array_c.setElementAt(i, array_b.getElementAt(i) / array_a.getElementAt(i));
+//        else cout << "Incorect order variable" << endl;
+//    }
+//    cout << "Diviation:" << endl;
+//    array_c.printArray();
+//}
 void div(MyArray array_a, MyArray array_b, MyArray& array_c, int order) {
-    if((array_a.getLength() != array_b.getLength()) ||
-       (array_b.getLength() != array_c.getLength()) ||
-       (array_a.getLength() != array_c.getLength()))
+    if((array_a.arr_length != array_b.arr_length) ||
+       (array_b.arr_length != array_c.arr_length) ||
+       (array_a.arr_length != array_c.arr_length))
         return;
     for (int i = 0; i < array_a.getLength(); i++) {
         if (order == 0)
-            array_c.setElementAt(i, array_a.getElementAt(i) / array_b.getElementAt(i));
+            array_c.array[i] = array_a.array[i] / array_b.array[i];
         else if (order == 1)
-            array_c.setElementAt(i, array_b.getElementAt(i) / array_a.getElementAt(i));
+            array_c.array[i] = array_b.array[i] / array_a.array[i];
         else cout << "Incorect order variable" << endl;
     }
     cout << "Diviation:" << endl;
@@ -92,12 +156,79 @@ void div(MyArray array_a, MyArray array_b, MyArray& array_c, int order) {
 
 // |||||||||||<LAB #2>|||||||||||
 MyMatrix::MyMatrix(){
-    cout << "Starting default matrix constructor !" << endl;
+//    this->setNumRows();
+//    this->setNumColumns();
+
+    this->matrix_1 = new double* [this->nRow];
+    for (int i = 0; i < this->nRow; i++){
+        this->matrix_1[i] = new double [this->nCol];
+    }
+
+    //cout << "Starting default matrix constructor !" << endl;
     for (int i = 0; i < this->nRow; i++){
         for (int j = 0; j < this->nCol; j++){
             this->matrix_1 [i][j] = 0;
         }
     }
+}
+
+MyMatrix::MyMatrix(int row, int col){
+    this->nRow = row;
+    this->nCol = col;
+    this->matrix_1 = new double* [this->nRow];
+    for (int i = 0; i < this->nRow; i++){
+        this->matrix_1[i] = new double [this->nCol];
+    }
+    for (int i = 0; i < this->nRow; i++){
+        for (int j = 0; j < this->nCol; j++){
+            this->matrix_1 [i][j] = 0;
+        }
+    }
+}
+
+MyMatrix::MyMatrix(const MyMatrix& origin){
+    //copy constructor
+    this->nRow = origin.nRow;
+    this->nCol = origin.nCol;
+    this->matrix_1 = new double* [this->nRow];
+    for (int i = 0; i < this->nRow; i++){
+        this->matrix_1[i] = new double [this->nCol];
+    }
+    for (int i = 0; i < this->nRow; i++){
+        for (int j = 0; j < this->nCol; j++){
+            this->matrix_1 [i][j] = origin.matrix_1 [i][j];
+        }
+    }
+}
+
+MyMatrix MyMatrix::operator = (MyMatrix b){
+    //Overloaded operator "="
+    this->nRow = b.nRow;
+    this->nCol = b.nCol;
+    if(this->matrix_1 != NULL){
+        for (int i; i < this->nRow; i++){
+            delete[] this->matrix_1[i];
+        }
+        delete[] this->matrix_1;
+    }
+    this->matrix_1 = new double* [this->nRow];
+    for (int i = 0; i < this->nRow; i++){
+        this->matrix_1[i] = new double [this->nCol];
+    }
+    for (int i = 0; i < this->nRow; i++){
+        for (int j = 0; j < this->nCol; j++){
+            this->matrix_1 [i][j] = b.matrix_1 [i][j];
+        }
+    }
+    return *this;
+}
+
+
+MyMatrix::~MyMatrix(){
+    for (int i; i < this->nRow; i++){
+        delete[] this->matrix_1[i];
+    }
+    delete[] this->matrix_1;
 }
 
 int MyMatrix::getNumRows(){
@@ -110,38 +241,26 @@ int MyMatrix::getNumColumns(){
 
 
 double MyMatrix::getElementAt(int i, int j){
-    if ((i < 0) || (i >= this->nRow)){
-        if ((j < 0) || (j >= this->nCol)){
-           return 0;
-        }
+    if ((i < 0) || (i >= this->nRow) || (j < 0) || (j >= this->nCol)){
+        return 0;
     }
     else
         return this->matrix_1[i][j];
 }
 
-double MyMatrix::getElementAt2ndMatrix(int i, int j){
-    if ((i < 0) || (i >= this->nRow)){
-        if ((j < 0) || (j >= this->nCol)){
-           return 0;
-        }
-    }
-    else
-        return this->matrix_2[i][j];
-}
+//void MyMatrix::setNumRows(){
+//    int rows;
+//    cout << "Enter the number of rows" << endl;
+//    cin >> rows;
+//    this->nRow = rows;
+//}
 
-void MyMatrix::setNumRows(){
-    int rows;
-    cout << "Enter the number of rows" << endl;
-    cin >> rows;
-    this->nRow = rows;
-}
-
-void MyMatrix::setNumColumns(){
-    int columns;
-    cout << "Enter the number of columns" << endl;
-    cin >> columns;
-    this->nCol = columns;
-}
+//void MyMatrix::setNumColumns(){
+//    int columns;
+//    cout << "Enter the number of columns" << endl;
+//    cin >> columns;
+//    this->nCol = columns;
+//}
 
 void MyMatrix::setElementAt(int i, int j, double value){
     if ((i < 0) || (i >= this->nRow)){
@@ -153,24 +272,14 @@ void MyMatrix::setElementAt(int i, int j, double value){
         this->matrix_1[i][j] = value;
 }
 
-void MyMatrix::setElementAt2ndMatrix(int i, int j, double value){
-    if ((i < 0) || (i >= this->nRow)){
-        if ((j < 0) || (j >= this->nCol)){
-           return;
-        }
-    }
-    else
-        this->matrix_2[i][j] = value;
-}
-
 void MyMatrix::setAllElement(){
-    this->setNumRows();
-    this->setNumColumns();
+//    this->setNumRows();
+//    this->setNumColumns();
 
-    this->matrix_1 = new double* [this->nRow];
-    for (int i = 0; i < this->nRow; i++){
-        this->matrix_1[i] = new double [this->nCol];
-    }
+//    this->matrix_1 = new double* [this->nRow];
+//    for (int i = 0; i < this->nRow; i++){
+//        this->matrix_1[i] = new double [this->nCol];
+//    }
 
     cout << "Enter the element in order" << endl;
     for (int i = 0; i < this->nRow; i++){
@@ -181,37 +290,11 @@ void MyMatrix::setAllElement(){
     this->printMatrix();
 }
 
-void MyMatrix::setAllElement2ndMatrix(){
-
-    this->matrix_2 = new double* [this->nRow];
-    for (int i = 0; i < this->nRow; i++){
-        this->matrix_2[i] = new double [this->nCol];
-    }
-
-    cout << "Enter the element in order" << endl;
-    for (int i = 0; i < this->nRow; i++){
-        for (int j = 0; j < this->nCol; j++){
-            cin >> this->matrix_2 [i][j];
-        }
-    }
-    this->printMatrix();
-}
-
 void MyMatrix::printMatrix()
 {
     for (int i = 0; i < this->nRow; i++){
         for (int j = 0; j < this->nCol; j++){
             cout << "\t" << this->matrix_1 [i][j];
-        }
-        cout << endl;
-    }
-}
-
-void MyMatrix::print2ndMatrix()
-{
-    for (int i = 0; i < this->nRow; i++){
-        for (int j = 0; j < this->nCol; j++){
-            cout << "\t" << this->matrix_2 [i][j];
         }
         cout << endl;
     }
@@ -234,26 +317,6 @@ void mirror (MyArray array_a){
 
     array_a.printArray();
     // visArr(arr, size);
-}
-
-void init (int *&arr, int &size){
-    cout << "The number of array elements" << endl;
-    cin >> size;
-    cout << "Enter the elements" << endl;
-    arr = new int[size];
-    int i;
-    for (i = 0; i < size; i += 1){
-        cin >> arr[i];
-    }
-    visArr(arr, size);
-}
-
-void visArr (int *&arr, int size){
-    for (int i = 0; i < size; i++){
-        printf("%d", arr[i]);
-        printf(" ");
-    }
-    printf("\n");
 }
 
 void initP (int*&arr, int &size){
@@ -279,22 +342,33 @@ void task2 (int*arr2, int size2, MyArray array_a){
 
 void Creation (MyMatrix matrix_a, double* &arr){
     double max;
-    arr = new double [matrix_a.getNumColumns()];
-    for (int j=0; j < matrix_a.getNumColumns(); j++){
-        max = matrix_a.getElementAt(0, j);
-        for (int i = 0; i < matrix_a.getNumRows(); i++){
-            if (matrix_a.getElementAt(i, j) > max)
-                max = matrix_a.getElementAt(i, j);
+    arr = new double [matrix_a.nCol];
+    for (int j=0; j < matrix_a.nCol; j++){
+        max = matrix_a.matrix_1[0][j];
+        for (int i = 0; i < matrix_a.nRow; i++){
+            if (matrix_a.matrix_1[i][j] > max)
+                max = matrix_a.matrix_1[i][j];
         }
         arr[j] = max;
     }
+//    double max;
+//    arr = new double [matrix_a.nCol];
+//    for (int j=0; j < matrix_a.nCol; j++){
+//        max = matrix_a.getElementAt(0, j);
+//        for (int i = 0; i < matrix_a.nRow; i++){
+//            if (matrix_a.getElementAt(i, j) > max)
+//                max = matrix_a.getElementAt(i, j);
+//        }
+//        arr[j] = max;
+//    }
 }
 void printArrD (MyMatrix matrix_a, double* &arr){
     cout << "Output array" << endl;
-    for (int i = 0; i < matrix_a.getNumColumns(); i++){
+    for (int i = 0; i < matrix_a.nCol; i++){
         cout << "\t" << arr[i];
     }
     cout << endl;
+    delete [] arr;
 }
 
 void ChangeMinMax (MyMatrix matrix_a){
@@ -321,14 +395,14 @@ void ChangeMinMax (MyMatrix matrix_a){
     matrix_a.printMatrix();
 }
 
-void mult (MyMatrix matrix_a){
+void mult (MyMatrix matrix_a, MyMatrix matrix_b, MyMatrix& matrix_c){
     cout << "Filling the 2nd matrix" << endl;
-    matrix_a.setAllElement2ndMatrix();
+    matrix_b.setAllElement();
     cout << "Matrix multiplication result:" << endl;
     for (int i = 0; i < matrix_a.getNumRows(); i++){
         for (int j = 0; j <  matrix_a.getNumColumns(); j++){
-            matrix_a.setElementAt2ndMatrix(i, j, (matrix_a.getElementAt(i, j) * matrix_a.getElementAt2ndMatrix(i, j)));
+            matrix_c.setElementAt(i, j, (matrix_a.getElementAt(i, j) * matrix_b.getElementAt(i, j)));
         }
     }
-    matrix_a.print2ndMatrix();
+    matrix_c.printMatrix();
 }
